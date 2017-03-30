@@ -38,7 +38,7 @@ inOrder Leaf         = []
 inOrder (Node l m r) = inOrder l ++ [m] ++ inOrder r
 
 whatWentWrong :: [LogMessage] -> [String]
-whatWentWrong messages = converToStringList (inOrder (build messages))
-        where converToStringList = map converToString
-              converToString (LogMessage (Error _) _ s) = s
-              converToString _                          = []
+whatWentWrong messages = converToString (inOrder (build messages))
+        where converToString [] = []
+              converToString (LogMessage (Error _) _ s:xs) = s:converToString xs
+              converToString (_:xs)                        = converToString xs
