@@ -1,6 +1,7 @@
 {-# OPTIONS_GHC -Wall #-}
-module LogAnalysis where
+--module LogAnalysis where
 import           Log
+import           System.Environment (getArgs)
 
 isNum :: String -> Bool
 isNum (x:xs) = (x `elem` ['0'..'9']) && isNum xs
@@ -42,3 +43,16 @@ whatWentWrong messages = converToString (inOrder (build messages))
         where converToString [] = []
               converToString (LogMessage (Error _) _ s:xs) = s:converToString xs
               converToString (_:xs)                        = converToString xs
+
+interactWith inputFile outputFile = do
+    input <- readFile inputFile
+    writeFile outputFile (unlines (getStrings (inOrder (build (parse input)))))
+        where getStrings  (LogMessage _ _ s:xs) = s:getStrings xs
+              getStrings (_:sx)                 = getStrings sx
+
+main = mainWith
+  where mainWith = do
+          args <- getArgs
+          case args of
+            [input,output] -> interactWith input output
+            _              -> putStrLn "error: exactly two arguments needed"
