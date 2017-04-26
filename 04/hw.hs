@@ -1,6 +1,8 @@
 {-# OPTIONS_GHC -Wall #-}
 module My_high_order where
 
+import           Data.List
+
 --exercise 1
 {-
 1. fun1 :: [Integer] -> Integer
@@ -60,10 +62,7 @@ False values the input list contains.
 Your solution must be implemented using a fold.
 -}
 xor :: [Bool] -> Bool
-xor = foldr boolXor False . filter (== True)
-
-boolXor :: Bool -> Bool -> Bool
-boolXor a b = a /= b
+xor = foldr (/=) False . filter (== True)
 
 {-
 2. Implement map as a fold. That is, complete the definition
@@ -94,4 +93,5 @@ ing function composition. Given an integer n, your function should
 generate all the odd prime numbers up to 2n + 2.
 -}
 sieveSundaram :: Integer -> [Integer]
-sieveSundaram = 
+sieveSundaram n = [ 2 * k + 1 | k <- [1..n] \\ cardPort]
+        where cardPort = [ i + j + 2 * i * j | i <- [1..n], j <- [i..n]]
