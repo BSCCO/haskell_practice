@@ -4,10 +4,11 @@
 
 module Calc where
 
-import qualified Data.Map as M
+import qualified Data.Map   as M
+import           Data.Maybe
 import           ExprT
-import           Parser   (parseExp)
-import qualified StackVM  as S
+import           Parser     (parseExp)
+import qualified StackVM    as S
 
 --Exercise 1
 {-
@@ -121,3 +122,18 @@ instance Expr VarExprT where
         lit = VarLit
         add = VarAdd
         mul = VarMul
+
+instance HasVars (M.Map String Integer -> Maybe Integer) where
+        var = M.lookup
+
+instance Expr (M.Map String Integer -> Maybe Integer) where
+        lit n _ = Just n
+        add f g m =if isNothing (f m) || isNothing (g m) then Nothing else
+                  Just (fromJust (f m) + fromJust (g m))
+        mul f g m =if isNothing (f m) || isNothing (g m) then Nothing else
+                  Just (fromJust (f m) * fromJust (g m))
+
+withVars :: [(String, Integer)]
+        -> (M.Map String Integer -> Maybe Integer)
+        -> Maybe Integer
+withVars vs expression = expression $ M.fromList vs
